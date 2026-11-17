@@ -90,9 +90,10 @@
                     <td>{{ $loop->iteration }}</td>
 
                     <td>
-                        <strong>
+                        <a href="{{ route('jobs.show', $job->id) }}"
+                        class="text-decoration-none fw-bold">
                             {{ $job->job_title }}
-                        </strong>
+                        </a>
                     </td>
 
                     <td>

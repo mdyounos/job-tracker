@@ -54,4 +54,27 @@ class JobApplicationController extends Controller
                 'Application added successfully.'
             );
     }
+
+    public function show($id)
+    {
+        $job = JobApplication::findOrFail($id);
+
+        return view('show', compact('job'));
+    }
+
+    public function edit($id)
+    {
+        $job = JobApplication::findOrFail($id);
+
+        return view('edit', compact('job'));
+    }
+
+    public function update(Request $request, JobApplication $job)
+    {
+        $job->update($request->all());
+
+        return redirect()
+            ->route('jobs.show', $job->id)
+            ->with('success', 'Job updated successfully.');
+    }
 }

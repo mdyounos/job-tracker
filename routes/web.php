@@ -22,9 +22,9 @@ Route::get('/', function () {
     return redirect('/jobs');
 });
 
-Route::resource(
-    'jobs',
-    JobApplicationController::class
-);
+Route::resource('jobs', JobApplicationController::class);
+
+Route::get('/jobs/search-duplicate', [JobApplicationController::class, 'searchDuplicate'])
+    ->name('jobs.search-duplicate');
 
 require __DIR__.'/auth.php';

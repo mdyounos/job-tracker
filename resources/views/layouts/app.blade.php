@@ -64,7 +64,7 @@
         <a class="navbar-brand" href="{{ url('/') }}">
             Job Tracker
         </a>
-
+        
         <div class="navbar-nav ms-auto">
 
             <a class="nav-link"

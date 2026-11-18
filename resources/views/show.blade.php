@@ -51,6 +51,27 @@
                                class="form-control edit-mode d-none">
                     </div>
 
+                    {{-- Circular Link --}}
+                    <div class="col-md-12 mb-3">
+                        <label class="fw-bold">Circular Link</label>
+
+                        <div class="form-control view-mode">
+                            @if($job->circular_link)
+                                <a href="{{ $job->circular_link }}"
+                                target="_blank">
+                                    📄 View Circular
+                                </a>
+                            @else
+                                N/A
+                            @endif
+                        </div>
+
+                        <input type="url"
+                            name="circular_link"
+                            value="{{ $job->circular_link }}"
+                            class="form-control edit-mode d-none">
+                    </div>
+
                     {{-- Number of post --}}
                     <div class="col-md-6 mb-3">
                         <label class="fw-bold">Number Of Post</label>
@@ -65,34 +86,44 @@
                                class="form-control edit-mode d-none">
                     </div>
 
-                    {{-- Organization --}}
+                    {{-- Salary --}}
                     <div class="col-md-6 mb-3">
-                        <label class="fw-bold">Organization</label>
+                        <label class="fw-bold">Salary</label>
 
                         <div class="form-control view-mode">
-                            {{ $job->organization ?? 'N/A' }}
+                            {{ $job->salary ?? 'N/A' }}
                         </div>
 
                         <input type="text"
-                               name="organization"
-                               value="{{ $job->organization }}"
-                               class="form-control edit-mode d-none">
+                            name="salary"
+                            value="{{ $job->salary }}"
+                            class="form-control edit-mode d-none">
                     </div>
 
-                    {{-- Department --}}
+                    {{-- Grade --}}
                     <div class="col-md-6 mb-3">
-                        <label class="fw-bold">Department</label>
+
+                        <label class="fw-bold">Grade</label>
 
                         <div class="form-control view-mode">
-                            {{ $job->department ?? 'N/A' }}
+                            {{ $job->grade ?? 'N/A' }}
                         </div>
 
-                        <input type="text"
-                               name="department"
-                               value="{{ $job->department }}"
-                               class="form-control edit-mode d-none">
-                    </div>
+                        <select name="grade"
+                                class="form-select edit-mode d-none">
+                            <option value="">Select Grade</option>
 
+                            @for($i = 1; $i <= 20; $i++)
+                                <option value="{{ $i }}"
+                                    {{ $job->grade == $i ? 'selected' : '' }}>
+                                    Grade {{ $i }}
+                                </option>
+                            @endfor
+
+                        </select>
+
+                    </div>
+                    
                     {{-- Discipline --}}
                     <div class="col-md-6 mb-3">
                         <label class="fw-bold">Discipline</label>
@@ -121,6 +152,20 @@
                                class="form-control edit-mode d-none">
                     </div>
 
+                    {{-- Application Start Date --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold">Application Start Date</label>
+
+                        <div class="form-control view-mode">
+                            {{ $job->application_date ?? 'N/A' }}
+                        </div>
+
+                        <input type="date"
+                               name="application_start_date"
+                               value="{{ $job->application_start_date }}"
+                               class="form-control edit-mode d-none">
+                    </div>
+
                     {{-- Application End Date --}}
                     <div class="col-md-6 mb-3">
                         <label class="fw-bold">Application End Date</label>
@@ -135,18 +180,73 @@
                                class="form-control edit-mode d-none">
                     </div>
 
-                    {{-- Application Date --}}
+                    {{-- Apply Fee --}}
                     <div class="col-md-6 mb-3">
-                        <label class="fw-bold">Application Date</label>
+
+                        <label class="fw-bold">Apply Fee</label>
 
                         <div class="form-control view-mode">
-                            {{ $job->application_date ?? 'N/A' }}
+                            {{ $job->application_fee ? '৳'.$job->application_fee : 'N/A' }}
                         </div>
 
-                        <input type="date"
-                               name="application_date"
-                               value="{{ $job->application_date }}"
+                        <input type="number"
+                            name="application_fee"
+                            value="{{ $job->application_fee }}"
+                            class="form-control edit-mode d-none"
+                            placeholder="500">
+
+                    </div>
+
+                    {{-- Tracking No --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold">Tracking No</label>
+
+                        <div class="form-control view-mode">
+                            {{ $job->tracking_no ?? 'Not Available' }}
+                        </div>
+
+                        <input type="text"
+                            name="tracking_no"
+                            value="{{ $job->tracking_no }}"
+                            class="form-control edit-mode d-none"
+                            placeholder="26011400000002">
+                    </div>
+
+                    {{-- Exam Taker --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold">Exam Taker</label>
+
+                        <div class="form-control view-mode">
+                            {{ $job->exam_taker ?? 'N/A' }}
+                        </div>
+
+                        <input type="text"
+                               name="exam_taker"
+                               value="{{ $job->exam_taker }}"
                                class="form-control edit-mode d-none">
+                    </div>
+                    
+                    {{-- Exam Type --}}
+                    <div class="col-md-6 mb-3">
+
+                        <label class="fw-bold">Exam Type</label>
+
+                        <div class="form-control view-mode">
+                            {{ $job->exam_type ?? 'N/A' }}
+                        </div>
+
+                        <select name="exam_type"
+                                class="form-select edit-mode d-none">
+
+                            <option value="">Select Exam Type</option>
+
+                            <option value="Preliminary">Preliminary</option>
+                            <option value="Written">Written</option>
+                            <option value="Preliminary + Written">Preliminary + Written</option>
+                            <option value="Aptitude Test">Aptitude Test</option>
+                            <option value="Practical Test">Practical Test</option>
+                            <option value="Viva">Viva</option>                        
+                        </select>
                     </div>
 
                     {{-- Exam Date --}}
@@ -163,18 +263,33 @@
                                class="form-control edit-mode d-none">
                     </div>
 
-                    {{-- Educational Requirement --}}
-                    <div class="col-md-12 mb-3">
-                        <label class="fw-bold">Educational Requirement</label>
+                    {{-- Exam Time --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold">Exam Time</label>
 
-                        <div class="form-control view-mode"
-                             style="min-height:120px; white-space:pre-wrap;">
-                            {{ $job->req_edu ?? 'N/A' }}
+                        <div class="form-control view-mode">
+                            {{ $job->exam_time ? \Carbon\Carbon::parse($job->exam_time)->format('h:i A') : 'Not Published Yet' }}
                         </div>
 
-                        <textarea name="req_edu"
-                                  rows="6"
-                                  class="form-control edit-mode d-none">{{ $job->req_edu }}</textarea>
+                        <input type="time"
+                            name="exam_time"
+                            value="{{ $job->exam_time }}"
+                            class="form-control edit-mode d-none">
+                    </div>
+
+                    {{-- Exam Centre --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold">Exam Centre</label>
+
+                        <div class="form-control view-mode">
+                            {{ $job->exam_centre ?? 'Not Published Yet' }}
+                        </div>
+
+                        <input type="text"
+                            name="exam_centre"
+                            value="{{ $job->exam_centre }}"
+                            class="form-control edit-mode d-none"
+                            placeholder="Dhaka">
                     </div>
 
                     {{-- Status --}}
@@ -191,24 +306,71 @@
                         <select name="status"
                                 class="form-select edit-mode d-none">
 
-                            <option value="Circular Published" {{ $job->status=='Circular Published' ? 'selected' : '' }}>Circular Published</option>
-
-                            <option value="Applied" {{ $job->status=='Applied' ? 'selected' : '' }}>Applied</option>
-
-                            <option value="Admit Published" {{ $job->status=='Admit Published' ? 'selected' : '' }}>Admit Published</option>
-
-                            <option value="Preliminary" {{ $job->status=='Preliminary' ? 'selected' : '' }}>Preliminary</option>
-
-                            <option value="Written" {{ $job->status=='Written' ? 'selected' : '' }}>Written</option>
-
-                            <option value="Viva" {{ $job->status=='Viva' ? 'selected' : '' }}>Viva</option>
-
-                            <option value="Selected" {{ $job->status=='Selected' ? 'selected' : '' }}>Selected</option>
-
-                            <option value="Rejected" {{ $job->status=='Rejected' ? 'selected' : '' }}>Rejected</option>
-
+                            <option value="Applied">Applied</option>
+                            <option value="Exam Scheduled">Exam Scheduled</option>
+                            <option value="Absent">Absent</option>
+                            <option value="Result Pending">Result Pending</option>
+                            <option value="Passed">Passed</option>
+                            <option value="Failed">Failed</option>
                         </select>
 
+                    </div>
+                    
+                    {{-- Registration No --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold">Roll/Registration No</label>
+
+                        <div class="form-control view-mode">
+                            {{ $job->registration_no ?? 'N/A' }}
+                        </div>
+
+                        <input type="text"
+                            name="registration_no"
+                            value="{{ $job->registration_no }}"
+                            class="form-control edit-mode d-none"
+                            placeholder="001356">
+                    </div>
+
+                    {{-- Educational Requirement --}}
+                    <div class="col-md-12 mb-3">
+                        <label class="fw-bold">Educational Requirement</label>
+
+                        <div class="form-control view-mode"
+                             style="min-height:120px; white-space:pre-wrap;">
+                            {{ $job->req_edu ?? 'N/A' }}
+                        </div>
+
+                        <textarea name="req_edu"
+                                  rows="6"
+                                  class="form-control edit-mode d-none">{{ $job->req_edu }}</textarea>
+                    </div>
+                    
+                    {{-- Username --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold">Username</label>
+
+                        <div class="form-control view-mode">
+                            {{ $job->username ?? 'N/A' }}
+                        </div>
+
+                        <input type="text"
+                               name="username"
+                               value="{{ $job->username }}"
+                               class="form-control edit-mode d-none">
+                    </div>
+
+                    {{-- Password --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold">Password</label>
+
+                        <div class="form-control view-mode">
+                            {{ $job->password ?? 'N/A' }}
+                        </div>
+
+                        <input type="text"
+                            name="password"
+                            value="{{ $job->password }}"
+                            class="form-control edit-mode d-none">
                     </div>
 
                     {{-- Remarks --}}

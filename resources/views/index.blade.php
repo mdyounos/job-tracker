@@ -3,6 +3,30 @@
 @section('title', 'Job Application Tracker')
 
 @section('content')
+<div class="row mb-3">
+    <div class="col-md-8">
+        <form method="GET" action="{{ route('jobs.index') }}">
+            <div class="input-group">
+
+                <input type="text"
+                       name="search"
+                       class="form-control"
+                       placeholder="Search by Job Title, Organization, Tracking No..."
+                       value="{{ request('search') }}">
+
+                <button type="submit" class="btn btn-primary">
+                    Search
+                </button>
+
+                <a href="{{ route('jobs.index') }}"
+                   class="btn btn-secondary">
+                    Reset
+                </a>
+
+            </div>
+        </form>
+    </div>
+</div>
 
 <div class="row mb-4">
 

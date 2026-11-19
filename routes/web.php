@@ -1,30 +1,42 @@
+
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\JobApplicationController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Main Dashboard
+Route::get('/', [JobApplicationController::class, 'dashboard'])
+    ->name('dashboard');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Dashboard URL
+Route::get('/dashboard', [JobApplicationController::class, 'dashboard'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard.home');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-Route::get('/', function () {
-    return redirect('/jobs');
-});
-
+// Job Application Routes
 Route::resource('jobs', JobApplicationController::class);
 
+// Duplicate Search
 Route::get('/jobs/search-duplicate', [JobApplicationController::class, 'searchDuplicate'])
     ->name('jobs.search-duplicate');
+
+// Calendar
+Route::get('/calendar', [JobApplicationController::class, 'calendar'])
+    ->name('jobs.calendar');
+
+// Profile Routes
+Route::middleware('auth')->group(function () {
+
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+
+    Route::patch('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+
+    Route::delete('/profile', [ProfileController::class, 'destroy'])
+        ->name('profile.destroy');
+
+});
 
 require __DIR__.'/auth.php';

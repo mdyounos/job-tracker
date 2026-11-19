@@ -47,6 +47,15 @@
         </div>
 
         <div class="col-md-4">
+            <div class="card shadow-sm border-0 bg-dark text-white">
+                <div class="card-body">
+                    <h6>Absent</h6>
+                    <h2>{{ $absent }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
             <div class="card shadow-sm border-0 bg-secondary text-white">
                 <div class="card-body">
                     <h6>Result Pending</h6>
@@ -58,8 +67,8 @@
         <div class="col-md-4">
             <div class="card shadow-sm border-0 bg-success text-white">
                 <div class="card-body">
-                    <h6>Passed</h6>
-                    <h2>{{ $passed }}</h2>
+                    <h6>Selected</h6>
+                    <h2>{{ $selected }}</h2>
                 </div>
             </div>
         </div>
@@ -67,21 +76,11 @@
         <div class="col-md-4">
             <div class="card shadow-sm border-0 bg-danger text-white">
                 <div class="card-body">
-                    <h6>Failed</h6>
-                    <h2>{{ $failed }}</h2>
+                    <h6>Rejected</h6>
+                    <h2>{{ $rejected }}</h2>
                 </div>
             </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 bg-dark text-white">
-                <div class="card-body">
-                    <h6>Selected</h6>
-                    <h2>{{ $selected }}</h2>
-                </div>
-            </div>
-        </div>
-
+        </div>        
     </div>
 
     <div class="row mt-4 g-4">
@@ -255,9 +254,10 @@
                                             $statusClass = match($status) {
                                                 'Applied' => 'bg-primary',
                                                 'Exam Scheduled' => 'bg-info text-dark',
+                                                'Absent' => 'bg-danger text-dark',
                                                 'Result Pending' => 'bg-warning text-dark',
-                                                'Passed' => 'bg-success',
-                                                'Failed' => 'bg-danger',
+                                                'Selected' => 'bg-success',
+                                                'Rejected' => 'bg-danger',
                                                 default => 'bg-secondary',
                                             };
                                         @endphp

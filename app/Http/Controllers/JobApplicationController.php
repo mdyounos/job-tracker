@@ -1,13 +1,25 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\JobApplication;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 
 class JobApplicationController extends Controller
 {
+    private function allowedStatuses(): array
+    {
+        return [
+            'Applied',
+            'Exam Scheduled',
+            'Absent',
+            'Result Pending',
+            'Selected',
+            'Rejected',
+        ];
+    }
+
     public function index(Request $request)
     {
         $query = JobApplication::query();
@@ -39,26 +51,37 @@ class JobApplicationController extends Controller
 
     public function store(Request $request)
     {
-        JobApplication::create([
-            'circular_no' => $request->circular_no,
-            'circular_publish_date' => $request->circular_publish_date,
-            'job_title' => $request->job_title,
-            'organization' => $request->organization,
-            'ministry' => $request->ministry,
-            'application_start_date' => $request->application_start_date,
-            'application_end_date' => $request->application_end_date,
-            'application_fee' => $request->application_fee,
-            'req_edu' => $request->req_edu,
-            'status' => $request->status,
-            'number_of_post' => $request->number_of_post,
-            'username' => $request->username,
-            'salary' => $request->salary,
-            'grade' => $request->grade,
-            'exam_centre' => $request->exam_centre,
-            'exam_type' => $request->exam_type,
-            'registration_no' => $request->registration_no,
-            'tracking_no' => $request->tracking_no,
+        $validated = $request->validate([
+            'status' => [
+                'required',
+                Rule::in($this->allowedStatuses()),
+            ],
         ]);
+
+        $fields = [
+            'circular_no',
+            'circular_publish_date',
+            'job_title',
+            'organization',
+            'ministry',
+            'application_start_date',
+            'application_end_date',
+            'application_fee',
+            'req_edu',
+            'number_of_post',
+            'username',
+            'salary',
+            'grade',
+            'exam_centre',
+            'exam_type',
+            'registration_no',
+            'tracking_no',
+        ];
+
+        $data = $request->only($fields);
+        $data['status'] = $validated['status'];
+
+        JobApplication::create($data);
 
         return redirect()
             ->route('jobs.index')
@@ -81,7 +104,14 @@ class JobApplicationController extends Controller
 
     public function update(Request $request, JobApplication $job)
     {
-        $data = $request->only([
+        $validated = $request->validate([
+            'status' => [
+                'required',
+                Rule::in($this->allowedStatuses()),
+            ],
+        ]);
+
+        $fields = [
             'job_title',
             'organization',
             'circular_no',
@@ -102,7 +132,6 @@ class JobApplicationController extends Controller
             'exam_time',
             'exam_centre',
 
-            'status',
             'registration_no',
 
             'preli_date',
@@ -139,9 +168,11 @@ class JobApplicationController extends Controller
             'req_edu',
             'username',
             'remarks',
-        ]);
+        ];
 
-        // নতুন password দেওয়া হলে তবেই password update হবে
+        $data = $request->only($fields);
+        $data['status'] = $validated['status'];
+
         if ($request->filled('password')) {
             $data['password'] = $request->input('password');
         }
@@ -177,17 +208,15 @@ class JobApplicationController extends Controller
 
         $examScheduled = JobApplication::where('status', 'Exam Scheduled')->count();
 
+        $absent = JobApplication::where('status', 'Absent')->count();
+
         $resultPending = JobApplication::where('status', 'Result Pending')->count();
 
-        $passed = JobApplication::where('status', 'Passed')->count();
+        $selected = JobApplication::where('status', 'Selected')->count();
 
-        $failed = JobApplication::where('status', 'Failed')->count();
+        $rejected = JobApplication::where('status', 'Rejected')->count();
 
-        $selected = JobApplication::where('final_result', 'Selected')->count();
-
-
-        // Upcoming Exams - Separate Exam Dates
-
+        // Upcoming Exams
         $examDateFields = [
             'preli_date' => 'Preliminary Examination',
             'written_date' => 'Written Examination',
@@ -202,16 +231,14 @@ class JobApplicationController extends Controller
             foreach (array_keys($examDateFields) as $field) {
                 $query->orWhere(function ($q) use ($field, $today) {
                     $q->whereNotNull($field)
-                    ->whereDate($field, '>=', $today);
+                        ->whereDate($field, '>=', $today);
                 });
             }
         })->get();
 
         foreach ($examJobs as $job) {
             foreach ($examDateFields as $field => $examName) {
-
                 if ($job->$field && $job->$field >= $today) {
-
                     $upcomingExams[] = [
                         'job_id' => $job->id,
                         'job_title' => $job->job_title,
@@ -228,14 +255,12 @@ class JobApplicationController extends Controller
             ->take(10)
             ->values();
 
-
         // Application Closing Soon
         $closingSoon = JobApplication::whereNotNull('application_end_date')
             ->whereDate('application_end_date', '>=', $today)
             ->orderBy('application_end_date')
             ->take(5)
             ->get();
-
 
         // Upcoming Events
         $upcomingEvents = [];
@@ -275,7 +300,6 @@ class JobApplicationController extends Controller
             ->sortBy('date')
             ->take(8)
             ->values();
-
 
         // Monthly Calendar
         try {
@@ -343,23 +367,22 @@ class JobApplicationController extends Controller
             'totalJobs',
             'applied',
             'examScheduled',
+            'absent',
             'resultPending',
-            'passed',
-            'failed',
             'selected',
+            'rejected',
             'upcomingExams',
             'closingSoon',
             'upcomingEvents',
             'currentMonth',
             'calendarDays',
             'previousMonth',
-            'nextMonth',
+            'nextMonth'
         ));
     }
 
     public function calendar(Request $request)
     {
-        // কোন মাসের Calendar দেখাবে
         try {
             $currentMonth = $request->filled('month')
                 ? Carbon::createFromFormat('Y-m', $request->month)->startOfMonth()
@@ -368,7 +391,6 @@ class JobApplicationController extends Controller
             $currentMonth = now()->startOfMonth();
         }
 
-        // যেসব ফিল্ডে তারিখ আছে
         $dateFields = [
             'admit_publish_date' => 'Admit Card',
             'preli_date' => 'Preliminary',
@@ -379,7 +401,6 @@ class JobApplicationController extends Controller
             'joining_date' => 'Joining',
         ];
 
-        // তারিখ দেওয়া আছে এমন চাকরিগুলো সংগ্রহ
         $jobs = JobApplication::where(function ($query) use ($dateFields) {
             foreach (array_keys($dateFields) as $field) {
                 $query->orWhereNotNull($field);
@@ -398,6 +419,7 @@ class JobApplicationController extends Controller
                             'title' => $job->job_title,
                             'organization' => $job->organization,
                             'type' => $eventName,
+                            'status' => $job->status,
                             'job_id' => $job->id,
                         ];
                     }
@@ -405,7 +427,6 @@ class JobApplicationController extends Controller
             }
         }
 
-        // Calendar তৈরি
         $startDate = $currentMonth->copy()->startOfWeek(Carbon::SUNDAY);
         $endDate = $currentMonth->copy()->endOfMonth()->endOfWeek(Carbon::SATURDAY);
 

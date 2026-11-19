@@ -78,8 +78,8 @@
             <option value="Exam Scheduled">Exam Scheduled</option>
             <option value="Absent">Absent</option>
             <option value="Result Pending">Result Pending</option>
-            <option value="Passed">Passed</option>
-            <option value="Failed">Failed</option>
+            <option value="Selected">Selected</option>
+            <option value="Rejected">Rejected</option>
         </select>
     </div>
 

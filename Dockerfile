@@ -33,15 +33,16 @@ RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
 
 WORKDIR /var/www/html
 
+# Copy all project files first
+COPY . .
+
 # Install Composer dependencies
-COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Install frontend dependencies and build
-COPY package*.json ./
+# Install frontend dependencies
 RUN npm ci
 
-COPY . .
+# Build assets
 RUN npm run build
 
 # Apache public directory

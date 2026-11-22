@@ -1,17 +1,27 @@
 
 # PHP + Apache
-FROM php:8.5-apache
+FROM php:8.3-apache
 
 # Required PHP extensions
 RUN apt-get update && apt-get install -y \
     git unzip zip curl \
-    libzip-dev libicu-dev libonig-dev \
-    libpng-dev libjpeg62-turbo-dev libfreetype6-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo_mysql mbstring bcmath \
-       exif gd zip intl opcache \
-    && a2enmod rewrite \
-    && rm -rf /var/lib/apt/lists/*
+    libzip-dev \
+    libicu-dev \
+    libonig-dev \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+ && docker-php-ext-configure gd --with-freetype --with-jpeg \
+ && docker-php-ext-install \
+    pdo_mysql \
+    mbstring \
+    bcmath \
+    exif \
+    gd \
+    zip \
+    intl \
+ && a2enmod rewrite \
+ && apt-get clean
 
 # Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -47,8 +57,9 @@ RUN echo '<Directory /var/www/html/public>' >> /etc/apache2/apache2.conf \
     && echo '</Directory>' >> /etc/apache2/apache2.conf
 
 # Permissions
-RUN chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
+RUN mkdir -p storage bootstrap/cache \
+ && chown -R www-data:www-data storage bootstrap/cache \
+ && chmod -R 775 storage bootstrap/cache
 
 EXPOSE 80
 
